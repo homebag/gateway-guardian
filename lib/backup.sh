@@ -46,22 +46,21 @@ create_local_backup() {
     # 创建备份目录
     mkdir -p "$LOCAL_BACKUP_DIR"
     
-    # 脱敏并压缩
-    local temp_config=$(mktemp)
-    sanitize_config "$HOME/.config/openclaw/openclaw.json" "$temp_config"
+    # 直接使用原始配置，不脱敏 (备份需要完整配置用于恢复)
+    local config_source="$HOME/.config/openclaw/openclaw.json"
     
     # 压缩
-    gzip -c "$temp_config" > "${temp_config}.gz"
+    gzip -c "$config_source" > "${config_source}.gz"
     
     # 加密 (如果密钥存在)
     if [ -f "$ENCRYPTION_KEY_FILE" ]; then
-        openssl enc -aes-256-cbc -salt -pbkdf2 -in "${temp_config}.gz" -out "$backup_path" -pass file:"$ENCRYPTION_KEY_FILE" 2>/dev/null
-        rm -f "${temp_config}.gz" "$temp_config"
+        openssl enc -aes-256-cbc -salt -pbkdf2 -in "${config_source}.gz" -out "$backup_path" -pass file:"$ENCRYPTION_KEY_FILE" 2>/dev/null
+        rm -f "${config_source}.gz"
         echo "✅ 加密备份已创建: $backup_path"
     else
         # 无密钥则不加密
-        mv "${temp_config}.gz" "${backup_path%.enc}"
-        rm -f "$temp_config"
+        mv "${config_source}.gz" "${backup_path%.enc}"
+        rm -f "$config_source"
         echo "⚠️ 未加密备份已创建: ${backup_path%.enc}"
     fi
     

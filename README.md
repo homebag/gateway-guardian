@@ -156,7 +156,7 @@ gateway-guardian/
 
 ### 远程备份 (可选)
 
-支持 GitHub 私有仓库备份，自动脱敏敏感字段：
+支持 GitHub 私有仓库备份，保留完整配置文件用于故障恢复。
 
 ```bash
 # 配置环境变量
@@ -167,15 +167,6 @@ export BACKUP_ENCRYPTION_KEY="your-key"
 ENABLE_GITHUB_BACKUP=true
 GITHUB_REPO="https://github.com/user/repo"
 ```
-
-### 自动脱敏
-
-备份自动移除以下敏感字段：
-- `token`
-- `password`
-- `apiKey`
-- `secret`
-- `credential`
 
 ## 🔔 通知示例
 

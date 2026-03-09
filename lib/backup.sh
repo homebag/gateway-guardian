@@ -146,19 +146,21 @@ push_to_remote() {
     local timestamp=$(date +%Y%m%d-%H%M%S)
     local backup_file="config-$timestamp.json.enc"
     
-    # 脱敏加密
-    local temp_file=$(mktemp)
-    sanitize_config "$HOME/.config/openclaw/openclaw.json" "$temp_file"
+    # 创建当前备份 (不脱敏，保留完整配置用于恢复)
+    local timestamp=$(date +%Y%m%d-%H%M%S)
+    local backup_file="config-$timestamp.json.enc"
+    
+    # 直接使用原始配置，不脱敏 (远程备份需要完整配置用于恢复)
+    local config_source="$HOME/.config/openclaw/openclaw.json"
     
     if [ -f "$ENCRYPTION_KEY_FILE" ]; then
-        openssl enc -aes-256-cbc -salt -pbkdf2 -in "$temp_file" -out "$backup_dir/$backup_file" -pass file:"$ENCRYPTION_KEY_FILE"
+        # 加密但不脱敏
+        gzip -c "$config_source" | openssl enc -aes-256-cbc -salt -pbkdf2 -out "$backup_dir/$backup_file" -pass file:"$ENCRYPTION_KEY_FILE"
     else
-        echo "错误: 需要加密密钥才能远程备份"
-        rm -f "$temp_file"
-        return 1
+        # 无密钥则直接压缩
+        gzip -c "$config_source" > "$backup_dir/config-$timestamp.json.gz"
+        backup_file="config-$timestamp.json.gz"
     fi
-    
-    rm -f "$temp_file"
     
     # Git 操作
     cd "$backup_dir"

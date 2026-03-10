@@ -1,0 +1,29 @@
+%% Gateway Guardian - 备份回滚流程
+flowchart LR
+    subgraph 备份["💾 备份机制"]
+        A[配置变更] --> B{定时备份?}
+        B -->|每6小时| C[🔐 脱敏处理]
+        B -->|手动| C
+        
+        C --> D[📦 Gzip压缩]
+        D --> E[🔒 OpenSSL加密]
+        E --> F[💿 本地存储]
+        
+        F --> G{远程备份<br/>已配置?}
+        G -->|✅ 是| H[☁️ GitHub推送]
+        G -->|❌ 否| I[✅ 备份完成]
+    end
+    
+    subgraph 回滚["🔙 回滚机制"]
+        J[❌ 连续修复失败] --> K[📋 记录当前状态]
+        K --> L[🔍 查找稳定版本]
+        L --> M[git reset --hard]
+        M --> N[📊 生成Diff报告]
+        N --> O[🔄 重启Gateway]
+        O --> P[✅ 回滚完成]
+    end
+    
+    style C fill:#E3F2FD,stroke:#1976D2
+    style E fill:#E8F5E9,stroke:#388E3C
+    style L fill:#FFF3E0,stroke:#F57C00
+    style N fill:#FCE4EC,stroke:#C2185B

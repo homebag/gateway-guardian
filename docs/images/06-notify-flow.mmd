@@ -1,0 +1,24 @@
+%% Gateway Guardian - 通知流程
+flowchart TB
+    A[🔔 通知类型] --> B[🚀 启动通知]
+    A --> C[⚠️ 故障告警]
+    A --> D[🔧 修复中]
+    A --> E[✅ 恢复成功]
+    A --> F[🔙 回滚通知]
+    A --> G[❌ 恢复失败]
+    
+    B --> H[Discord Webhook]
+    C --> H
+    D --> H
+    E --> H
+    F --> H
+    G --> H
+    
+    H --> I{发送成功?}
+    I -->|✅| J[✅ 通知已送达]
+    I -->|❌| K[⚠️ 通知失败<br/>记录日志]
+    
+    style B fill:#E8F5E9,stroke:#388E3C
+    style C fill:#FFF3E0,stroke:#F57C00
+    style E fill:#90EE90,stroke:#2E7D32
+    style G fill:#FFCDD2,stroke:#C62828

@@ -28,7 +28,7 @@ source "$GUARDIAN_DIR/lib/security.sh"
 # 日志函数
 # ============================================================
 
-LOG_FILE="/tmp/gateway-guardian.log"
+LOG_FILE="/tmp/openclaw-guardian.log"
 
 log() {
     local level="$1"
@@ -116,9 +116,9 @@ update_state() {
 # 确保 Guardian 持续运行
 ensure_persistence() {
     # 检查 systemd 服务是否启用
-    if ! systemctl --user is-enabled gateway-guardian &>/dev/null; then
-        log_warn "Gateway Guardian 服务未启用，正在启用..."
-        systemctl --user enable gateway-guardian
+    if ! systemctl --user is-enabled openclaw-guardian &>/dev/null; then
+        log_warn "Guardian 服务未启用，正在启用..."
+        systemctl --user enable openclaw-guardian
     fi
     
     # 写入心跳

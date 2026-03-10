@@ -1,0 +1,30 @@
+%% Gateway Guardian - 智能检测流程图
+flowchart TB
+    subgraph 启动["🔍 三层检测机制"]
+        A["开始检测"] --> B[🔵 L1: HTTP检测]
+        B --> C{"HTTP 200?"}
+        C -->|✅ 是| D[✅ HTTP正常]
+        C -->|❌ 否| E[🟡 L2: 进程检测]
+        E --> F{"进程存在?"}
+        F -->|✅ 是| G[🟡 进程正常]
+        F -->|❌ 否| H[🟠 L3: Systemd检测]
+        H --> I{"服务active?"}
+    end
+    
+    subgraph 判断["📊 智能判断"]
+        I -->|✅ 是| J[✅ Gateway正常<br/>systemd说正常=正常]
+        I -->|❌ 否| K{"HTTP+进程<br/>都失败?"}
+        K -->|✅ 是| L[❌ Gateway异常<br/>触发恢复]
+        K -->|❌ 否| J
+    end
+    
+    subgraph 结果["📋 检测结果"]
+        D --> J
+        G --> J
+        L --> M[🔔 发送告警]
+        M --> N[⚙️ 自动恢复]
+    end
+    
+    style J fill:#90EE90,stroke:#2E7D32,stroke-width:2px
+    style L fill:#FFCDD2,stroke:#C62828,stroke-width:2px
+    style M fill:#FFF9C4,stroke:#F9A825,stroke-width:2px

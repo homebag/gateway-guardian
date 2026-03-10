@@ -63,7 +63,7 @@ log_debug() {
 }
 
 # 状态文件管理
-STATE_DIR="${STATE_DIR:-~/openclaw/workspace/gateway-guardian/state}"
+STATE_DIR="${STATE_DIR:-/home/yt/.openclaw/workspace/gateway-guardian/state}"
 
 ensure_state_dir() {
     mkdir -p "$STATE_DIR"

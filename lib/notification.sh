@@ -22,9 +22,9 @@ get_discord_token() {
     fi
     
     # 方法2: 从 OpenClaw 配置
-    if [[ -f "${OPENCLAW_DIR:-$HOME/.config/openclaw}/openclaw.json" ]]; then
+    if [[ -f "${OPENCLAW_DIR:-$HOME/.openclaw}/openclaw.json" ]]; then
         # 尝试多个可能的位置
-        token=$(cat "${OPENCLAW_DIR:-$HOME/.config/openclaw}/openclaw.json" | \
+        token=$(cat "${OPENCLAW_DIR:-$HOME/.openclaw}/openclaw.json" | \
             grep -oP '"token"\s*:\s*"\K[^"]+' 2>/dev/null | head -1)
         
         if [[ -n "$token" ]]; then

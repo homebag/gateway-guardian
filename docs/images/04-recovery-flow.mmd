@@ -1,0 +1,33 @@
+%% Gateway Guardian - 自动恢复流程
+flowchart TB
+    A[⚠️ 检测异常] --> B{连续失败<br/>> MAX_RETRIES?}
+    
+    B -->|否| C[📝 记录失败次数]
+    C --> D[⏱️ 等待检测间隔]
+    D --> A
+    
+    B -->|是| E[🛠️ 开始自动恢复]
+    
+    subgraph 恢复流程["🔄 自动恢复流程"]
+        E --> F[💾 备份当前配置]
+        F --> G[🧪 doctor --fix]
+        G --> H{修复成功?}
+        
+        H -->|✅ 是| I[🔄 重启Gateway]
+        H -->|❌ 否| J[🔙 配置回滚]
+        
+        J --> I
+        I --> K{重启成功?}
+        
+        K -->|✅ 是| L[✅ 恢复成功]
+        K -->|❌ 否| M[❌ 恢复失败]
+    end
+    
+    subgraph 通知["🔔 通知机制"]
+        L --> N[📱 Discord通知<br/>✅ Gateway已恢复]
+        M --> O[📱 Discord通知<br/>⚠️ 需要人工介入]
+    end
+    
+    style L fill:#90EE90,stroke:#2E7D32,stroke-width:2px
+    style M fill:#FFCDD2,stroke:#C62828,stroke-width:2px
+    style E fill:#FFF9C4,stroke:#F9A825,stroke-width:2px

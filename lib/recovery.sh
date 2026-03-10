@@ -15,8 +15,8 @@ fi
 # 配置默认值
 GATEWAY_SERVICE="${GATEWAY_SERVICE:-openclaw-gateway}"
 GATEWAY_STARTUP_WAIT="${GATEWAY_STARTUP_WAIT:-15}"
-OPENCLAW_CMD="${OPENCLAW_CMD:-openclaw}"
-WORKSPACE="${WORKSPACE:-~/workspace}"
+OPENCLAW_CMD="${OPENCLAW_CMD:-/home/yt/.npm-global/bin/openclaw}"
+WORKSPACE="${WORKSPACE:-/home/yt/.openclaw/workspace}"
 
 # ============================================================
 # 重启策略

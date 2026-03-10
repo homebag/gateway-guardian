@@ -8,7 +8,7 @@
 
 # 生成加密密钥
 generate_encryption_key() {
-    local key_file="${1:-~/openclaw/.backup-key}"
+    local key_file="${1:-$HOME/.openclaw/.backup-key}"
     
     if [ -f "$key_file" ]; then
         echo "密钥文件已存在: $key_file"
@@ -26,7 +26,7 @@ generate_encryption_key() {
 
 # 验证密钥
 verify_encryption_key() {
-    local key_file="${1:-~/openclaw/.backup-key}"
+    local key_file="${1:-$HOME/.openclaw/.backup-key}"
     
     if [ ! -f "$key_file" ]; then
         echo "❌ 密钥文件不存在"
@@ -53,7 +53,7 @@ verify_encryption_key() {
 encrypt_file() {
     local input_file="$1"
     local output_file="${2:-${input_file}.enc}"
-    local key_file="${3:-~/openclaw/.backup-key}"
+    local key_file="${3:-$HOME/.openclaw/.backup-key}"
     
     if [ ! -f "$input_file" ]; then
         echo "错误: 输入文件不存在"
@@ -77,7 +77,7 @@ encrypt_file() {
 decrypt_file() {
     local input_file="$1"
     local output_file="$2"
-    local key_file="${3:-~/openclaw/.backup-key}"
+    local key_file="${3:-$HOME/.openclaw/.backup-key}"
     
     if [ ! -f "$key_file" ]; then
         echo "错误: 密钥文件不存在"
@@ -110,8 +110,8 @@ run_security_audit() {
     
     # 1. 检查密钥文件
     echo "1. 加密密钥检查..."
-    if [ -f "~/openclaw/.backup-key" ]; then
-        local perms=$(stat -c %a "~/openclaw/.backup-key" 2>/dev/null)
+    if [ -f "$HOME/.openclaw/.backup-key" ]; then
+        local perms=$(stat -c %a "$HOME/.openclaw/.backup-key" 2>/dev/null)
         if [ "$perms" = "600" ]; then
             echo "   ✅ 密钥文件权限正确"
         else
@@ -126,7 +126,7 @@ run_security_audit() {
     # 2. 检查配置文件权限
     echo ""
     echo "2. 配置文件权限检查..."
-    local config_perms=$(stat -c %a "~/openclaw/openclaw.json" 2>/dev/null)
+    local config_perms=$(stat -c %a "$HOME/.openclaw/openclaw.json" 2>/dev/null)
     if [ -n "$config_perms" ] && [ "$config_perms" -le "640" ]; then
         echo "   ✅ 配置文件权限安全: $config_perms"
     else
@@ -137,7 +137,7 @@ run_security_audit() {
     # 3. 检查敏感数据暴露
     echo ""
     echo "3. 敏感数据暴露检查..."
-    if grep -r "token" "~/openclaw/workspace/gateway-guardian/logs/" 2>/dev/null | grep -v "\[REDACTED\]" | head -3; then
+    if grep -r "token" "$HOME/.openclaw/workspace/gateway-guardian/logs/" 2>/dev/null | grep -v "\[REDACTED\]" | head -3; then
         echo "   ⚠️ 日志中可能存在未脱敏的敏感数据"
         ((issues++))
     else
@@ -147,7 +147,7 @@ run_security_audit() {
     # 4. 检查备份目录
     echo ""
     echo "4. 备份目录检查..."
-    local backup_dir="~/openclaw/backups/gateway-config"
+    local backup_dir="$HOME/.openclaw/backups/gateway-config"
     if [ -d "$backup_dir" ]; then
         local backup_count=$(ls -1 "$backup_dir" 2>/dev/null | wc -l)
         echo "   ✅ 备份目录存在，共 $backup_count 个备份"
@@ -179,7 +179,7 @@ run_security_audit() {
 
 # 扫描配置文件中的敏感数据
 scan_sensitive_data() {
-    local file="${1:-~/openclaw/openclaw.json}"
+    local file="${1:-$HOME/.openclaw/openclaw.json}"
     
     echo "=== 敏感数据扫描: $file ==="
     echo ""
